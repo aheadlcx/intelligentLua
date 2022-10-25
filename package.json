@@ -1,12 +1,12 @@
 {
-	"name": "lsp-sample",
+	"name": "intelligentLua",
 	"description": "A language server example",
-	"author": "Microsoft Corporation",
+	"author": "aheadlcxzhang2008",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/aheadlcx/intelligentLua.git"
 	},
 	"publisher": "aheadlcxzhang2008",
 	"categories": [],

@@ -1,15 +1,15 @@
 {
-	"name": "lsp-sample-server",
-	"description": "Example implementation of a language server in node.",
+	"name": "intelligentLua-server",
+	"description": "A implementation of a language server in node.",
 	"version": "1.0.0",
-	"author": "Microsoft Corporation",
+	"author": "aheadlcxzhang2008",
 	"license": "MIT",
 	"engines": {
 		"node": "*"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/aheadlcx/intelligentLua.git"
 	},
 	"dependencies": {
 		"vscode-languageserver": "^7.0.0",

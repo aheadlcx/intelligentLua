@@ -144,12 +144,15 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// The validator creates diagnostics for all uppercase words length 2 and more
 	const text = textDocument.getText();
 	const pattern = /\b[A-Z]{2,}\b/g;
-	const pattern2 = /\b.*create.*\b/g;
+	const patternRemoveChild = /\b.*removeChild.*\b/g;
+	const patternDestroy = /\b.*destroy.*\b/g;
+	const patternMaskTexture = /\b.*maskTexture.*\b/g;
+	const patternElapsedTime = /\b.*elapsedTime.*\b/g;
 	let m: RegExpExecArray | null;
 
 	let problems = 0;
 	const diagnostics: Diagnostic[] = [];
-	while ((m = pattern2.exec(text)) && problems < settings.maxNumberOfProblems) {
+	while ((m = patternRemoveChild.exec(text)) && problems < settings.maxNumberOfProblems) {
 		problems++;
 		const diagnostic: Diagnostic = {
 			severity: DiagnosticSeverity.Error,
@@ -157,37 +160,53 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				start: textDocument.positionAt(m.index),
 				end: textDocument.positionAt(m.index + m[0].length)
 			},
-			message: `${m[0]} 注意BK这个函数的使用，请查阅闭坑指南.11111111111111111111`,
+			message: `${m[0]} 这个接口有毒，不要用，容易引起内存泄露`,
 			source: 'lsp-lua'
 		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'Spelling matters.2222222222222222'
-				},
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'Particularly for names.333333333333333333333333'
-				}
-			];
-		}
 		diagnostics.push(diagnostic);
 	}
 
-	// const diagnosticT: Diagnostic = 			{
-	// 	range: new vscode.Range(0, 0, 0, 1),
-	// 	message: 'We found an error，这个BK函数，要小心使用，谁谁层级这样那样使用，出过bug',
-	// 	severity: 1
-	// };
-	// const diagnosticsT: Diagnostic[] = [];
-	// diagnosticsT.push(diagnosticT);
+	while ((m = patternDestroy.exec(text)) && problems < settings.maxNumberOfProblems) {
+		problems++;
+		const diagnostic: Diagnostic = {
+			severity: DiagnosticSeverity.Error,
+			range: {
+				start: textDocument.positionAt(m.index),
+				end: textDocument.positionAt(m.index + m[0].length)
+			},
+			message: `4、 delayDestroy() 是延迟到下一帧才释放，更安全；一般不建议用 destroy()`,
+			source: 'lsp-lua'
+		};
+		diagnostics.push(diagnostic);
+	}
+
+	while ((m = patternMaskTexture.exec(text)) && problems < settings.maxNumberOfProblems) {
+		problems++;
+		const diagnostic: Diagnostic = {
+			severity: DiagnosticSeverity.Error,
+			range: {
+				start: textDocument.positionAt(m.index),
+				end: textDocument.positionAt(m.index + m[0].length)
+			},
+			message: `maskTexture会影响子view，因此父view与子view不能同时使用maskTexture，否则会渲染异常`,
+			source: 'lsp-lua'
+		};
+		diagnostics.push(diagnostic);
+	}
+
+	while ((m = patternElapsedTime.exec(text)) && problems < settings.maxNumberOfProblems) {
+		problems++;
+		const diagnostic: Diagnostic = {
+			severity: DiagnosticSeverity.Error,
+			range: {
+				start: textDocument.positionAt(m.index),
+				end: textDocument.positionAt(m.index + m[0].length)
+			},
+			message: `1、 elapsedTime跑到一个多小时之后会溢出重置，不建议直接使用elapsedTime，建议通过timeSinceLastFrame来计算实际的elapsedTime`,
+			source: 'lsp-lua'
+		};
+		diagnostics.push(diagnostic);
+	}
 
 	// Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
